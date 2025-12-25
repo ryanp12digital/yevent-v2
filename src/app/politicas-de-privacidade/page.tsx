@@ -8,7 +8,7 @@ export default function PrivacyPolicyPage() {
             <div className="container mx-auto px-4 max-w-4xl">
                 <div className="mb-8 flex justify-between items-center">
                     <h1 className="text-3xl font-bold text-slate-900">Política de Privacidade da Yevent</h1>
-                    <Link href="/contato">
+                    <Link href="/contact">
                         <Button className="bg-blue-600 hover:bg-blue-700 text-white rounded-md px-6">
                             Anuncie aqui seu espaço
                         </Button>

@@ -4,9 +4,10 @@
 import React, { useState, useEffect } from 'react';
 import { useSafeRouter } from '../../hooks/useSafeRouter';
 import { type Space } from '../../data/spaces';
-import { 
-  Users, Maximize2, ArrowLeft, Wifi, Tv, Coffee, 
-  Wind, ShieldCheck, MapPin, Calendar, Check, X, ZoomIn
+import {
+  Users, Maximize2, ArrowLeft, Wifi, Tv, Coffee,
+  Wind, ShieldCheck, MapPin, Calendar, Check, X, ZoomIn,
+  Projector, Speaker, GlassWater
 } from 'lucide-react';
 import Button from '../ui/Button';
 import { formatCurrency, cn } from '../../lib/utils';
@@ -31,18 +32,18 @@ const SpaceDetail: React.FC<SpaceDetailProps> = ({ space, onBack }) => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  const amenities = [
-    { icon: Wifi, label: 'Wi-Fi de Alta Velocidade' },
-    { icon: Tv, label: 'Projetor e Áudio' },
-    { icon: Coffee, label: 'Coffee Break (Opcional)' },
-    { icon: Wind, label: 'Ar Condicionado' },
-    { icon: ShieldCheck, label: 'Segurança 24h' },
-    { icon: Calendar, label: 'Reserva Flexível' },
-  ];
+  const amenityIcons: Record<string, { icon: React.ElementType, label: string }> = {
+    wifi: { icon: Wifi, label: 'Wi-Fi de Alta Velocidade' },
+    tv: { icon: Tv, label: 'TV / Monitor' },
+    projector: { icon: Projector, label: 'Projetor HD' },
+    sound: { icon: Speaker, label: 'Sistema de Som' },
+    coffee: { icon: Coffee, label: 'Coffee Break' },
+    water: { icon: GlassWater, label: 'Água Mineral' },
+  };
 
   // Simular uma galeria com a imagem principal e algumas aleatórias
   const galleryImages = [
-    space.image,
+    typeof space.image === 'string' ? space.image : space.image.src,
     `https://picsum.photos/seed/${space.id}1/800/600`,
     `https://picsum.photos/seed/${space.id}2/800/600`,
     `https://picsum.photos/seed/${space.id}3/800/600`,
@@ -58,11 +59,13 @@ const SpaceDetail: React.FC<SpaceDetailProps> = ({ space, onBack }) => {
     }
   };
 
+  const mapSrc = `https://maps.google.com/maps?q=${encodeURIComponent(space.address || space.city)}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
+
   return (
     <>
       <div className="pt-24 pb-20 bg-white">
         <div className="max-w-7xl mx-auto px-6">
-          <button 
+          <button
             id="detail-btn-back"
             onClick={handleBack}
             className="flex items-center text-slate-500 hover:text-blue-600 font-bold text-sm mb-8 transition-colors group"
@@ -75,31 +78,31 @@ const SpaceDetail: React.FC<SpaceDetailProps> = ({ space, onBack }) => {
             <div className="lg:col-span-8 space-y-10">
               {/* Galeria de Imagens */}
               <div className="space-y-4">
-                <div 
+                <div
                   className="aspect-video w-full rounded-3xl overflow-hidden shadow-xl cursor-zoom-in group relative"
                   onClick={() => setLightboxImage(galleryImages[0])}
                 >
-                  <img 
-                    src={galleryImages[0]} 
-                    alt={space.name} 
+                  <img
+                    src={galleryImages[0]}
+                    alt={space.name}
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
                     <ZoomIn className="text-white w-10 h-10 drop-shadow-md" />
                   </div>
                 </div>
-                
+
                 <div className="grid grid-cols-3 gap-4 h-32">
                   {galleryImages.slice(1).map((img, idx) => (
-                    <div 
+                    <div
                       key={idx}
                       className="rounded-2xl overflow-hidden bg-slate-100 cursor-pointer relative group"
                       onClick={() => setLightboxImage(img)}
                     >
-                      <img 
-                        src={img} 
-                        alt={`Galeria ${idx + 1}`} 
-                        className="w-full h-full object-cover group-hover:opacity-80 transition-opacity" 
+                      <img
+                        src={img}
+                        alt={`Galeria ${idx + 1}`}
+                        className="w-full h-full object-cover group-hover:opacity-80 transition-opacity"
                       />
                       <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                         <ZoomIn className="text-white w-6 h-6 drop-shadow-md" />
@@ -118,7 +121,7 @@ const SpaceDetail: React.FC<SpaceDetailProps> = ({ space, onBack }) => {
                   ))}
                 </div>
                 <h1 id="detail-title" className="text-3xl md:text-5xl font-semibold text-slate-900 mb-6">{space.name}</h1>
-                
+
                 <div className="flex flex-wrap gap-8 mb-10 pb-10 border-b border-slate-100">
                   <div className="flex items-center gap-3">
                     <div className="w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center text-blue-600">
@@ -163,12 +166,43 @@ const SpaceDetail: React.FC<SpaceDetailProps> = ({ space, onBack }) => {
               <div className="bg-slate-50 rounded-3xl p-8">
                 <h3 className="text-xl font-semibold mb-6 text-slate-900">O que este local oferece</h3>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-                  {amenities.map((item, idx) => (
-                    <div key={idx} className="flex items-center gap-3">
-                      <item.icon className="w-5 h-5 text-blue-600" />
-                      <span className="text-sm font-semibold text-slate-700">{item.label}</span>
-                    </div>
-                  ))}
+                  {space.amenities && space.amenities.map((key, idx) => {
+                    const amenity = amenityIcons[key];
+                    if (!amenity) return null;
+                    const Icon = amenity.icon;
+                    return (
+                      <div key={idx} className="flex items-center gap-3">
+                        <Icon className="w-5 h-5 text-blue-600" />
+                        <span className="text-sm font-semibold text-slate-700">{amenity.label}</span>
+                      </div>
+                    );
+                  })}
+                  {(!space.amenities || space.amenities.length === 0) && (
+                    <p className="text-slate-500 text-sm">Itens sob consulta.</p>
+                  )}
+                </div>
+              </div>
+
+              {/* Location Map Section */}
+              <div className="space-y-6">
+                <h3 className="text-xl font-semibold text-slate-900">Localização</h3>
+                <div className="w-full h-96 rounded-3xl overflow-hidden shadow-lg border border-slate-100 relative bg-slate-100">
+                  <iframe
+                    width="100%"
+                    height="100%"
+                    id="gmap_canvas"
+                    src={mapSrc}
+                    frameBorder="0"
+                    scrolling="no"
+                    marginHeight={0}
+                    marginWidth={0}
+                    title="Map"
+                    className="absolute inset-0 grayscale hover:grayscale-0 transition-all duration-700"
+                  ></iframe>
+                </div>
+                <div className="flex items-start gap-3 text-slate-600 text-sm font-medium bg-slate-50 p-6 rounded-2xl">
+                  <MapPin className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
+                  <p>{space.address}</p>
                 </div>
               </div>
             </div>
@@ -202,9 +236,9 @@ const SpaceDetail: React.FC<SpaceDetailProps> = ({ space, onBack }) => {
                   </div>
                 </div>
 
-                <Button 
+                <Button
                   id="detail-btn-request-booking"
-                  size="lg" 
+                  size="lg"
                   className="w-full py-5 text-base font-bold uppercase tracking-widest shadow-xl shadow-blue-200 rounded-2xl"
                   onClick={() => setIsBookingFormOpen(true)}
                 >
@@ -221,7 +255,7 @@ const SpaceDetail: React.FC<SpaceDetailProps> = ({ space, onBack }) => {
       </div>
 
       {isBookingFormOpen && (
-        <BookingForm 
+        <BookingForm
           spaceId={space.id}
           spaceName={space.name}
           onClose={() => setIsBookingFormOpen(false)}
@@ -230,24 +264,24 @@ const SpaceDetail: React.FC<SpaceDetailProps> = ({ space, onBack }) => {
 
       {/* Lightbox Modal */}
       {lightboxImage && (
-        <div 
+        <div
           className="fixed inset-0 z-[70] bg-black/90 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-300"
           onClick={() => setLightboxImage(null)}
         >
-          <button 
+          <button
             className="absolute top-6 right-6 text-white/70 hover:text-white transition-colors"
             onClick={() => setLightboxImage(null)}
           >
             <X className="w-8 h-8" />
           </button>
-          
-          <div 
+
+          <div
             className="relative max-w-5xl max-h-[90vh] rounded-lg overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300"
-            onClick={(e) => e.stopPropagation()} 
+            onClick={(e) => e.stopPropagation()}
           >
-            <img 
-              src={lightboxImage} 
-              alt="Visualização ampliada" 
+            <img
+              src={lightboxImage}
+              alt="Visualização ampliada"
               className="w-full h-full object-contain max-h-[85vh]"
             />
           </div>

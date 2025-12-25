@@ -33,9 +33,9 @@ const SpacesList: React.FC<SpacesListProps> = ({ limit, showTitle = true, onView
     // Lógica da capacidade
     const matchCapacity = space.capacity <= filters.capacity;
     const matchCity = !filters.city || filters.city === '' || space.city === filters.city;
-    
+
     // Verifica se o tipo está no nome ou nas tags
-    const matchType = !filters.type || filters.type === '' || 
+    const matchType = !filters.type || filters.type === '' ||
       space.tags.some(tag => tag.toLowerCase().includes(filters.type.toLowerCase())) ||
       space.name.toLowerCase().includes(filters.type.toLowerCase());
 
@@ -49,7 +49,7 @@ const SpacesList: React.FC<SpacesListProps> = ({ limit, showTitle = true, onView
   useGSAP(() => {
     const cards = gsap.utils.toArray('.space-card')
     if (cards.length > 0) {
-      gsap.fromTo(cards, 
+      gsap.fromTo(cards,
         { y: 40, opacity: 0 },
         {
           y: 0,
@@ -77,9 +77,10 @@ const SpacesList: React.FC<SpacesListProps> = ({ limit, showTitle = true, onView
   const CardContent = ({ space }: { space: Space }) => (
     <>
       <div className="relative aspect-[16/11] overflow-hidden bg-slate-50">
-        <img 
+
+        <img
           id={`space-img-${space.id}`}
-          src={space.image} 
+          src={typeof space.image === 'string' ? space.image : space.image.src}
           alt={space.name}
           className="w-full h-full object-cover transition-all duration-1000 group-hover:scale-110"
         />
@@ -89,13 +90,13 @@ const SpacesList: React.FC<SpacesListProps> = ({ limit, showTitle = true, onView
           </span>
         </div>
       </div>
-      
+
       <div className="p-8 flex flex-col flex-1">
         <div className="flex items-center gap-2 text-blue-600 mb-4 font-bold text-[9px] uppercase tracking-[0.25em] opacity-80">
           <MapPin className="w-3.5 h-3.5" />
           <span>Premium Location</span>
         </div>
-        
+
         <h3 className="text-xl md:text-2xl font-semibold text-slate-900 mb-6 group-hover:text-blue-600 transition-colors leading-tight line-clamp-2">
           {space.name}
         </h3>
@@ -128,7 +129,7 @@ const SpacesList: React.FC<SpacesListProps> = ({ limit, showTitle = true, onView
               {space.price ? formatCurrency(space.price) : 'Consulte'}
             </div>
           </div>
-          <div 
+          <div
             id={`space-btn-view-${space.id}`}
             className="w-12 h-12 rounded-xl bg-slate-950 text-white flex items-center justify-center transition-all group-hover:bg-blue-600 group-hover:-rotate-45 shadow-lg group-hover:shadow-blue-200"
           >
@@ -168,7 +169,7 @@ const SpacesList: React.FC<SpacesListProps> = ({ limit, showTitle = true, onView
             <React.Fragment key={space.id}>
               {onViewDetails ? (
                 // Modo SPA / App.tsx
-                <div 
+                <div
                   id={`space-card-${space.id}`}
                   onClick={(e) => {
                     e.preventDefault();
@@ -196,7 +197,7 @@ const SpacesList: React.FC<SpacesListProps> = ({ limit, showTitle = true, onView
         {!isFiltering && limit && (
           <div className="mt-20 flex justify-center">
             {seeAllHref ? (
-              <Link 
+              <Link
                 href={seeAllHref}
                 id="spaces-link-see-all"
                 className="group flex items-center gap-4 px-10 py-4 font-bold uppercase text-[10px] tracking-[0.25em] bg-white border-2 border-slate-900 text-slate-900 rounded-full hover:bg-slate-900 hover:text-white transition-all duration-500 shadow-xl shadow-slate-200"
@@ -205,7 +206,7 @@ const SpacesList: React.FC<SpacesListProps> = ({ limit, showTitle = true, onView
                 Explorar todos os espaços
               </Link>
             ) : (
-              <button 
+              <button
                 type="button"
                 id="spaces-btn-see-all"
                 onClick={handleSeeAllClick}
@@ -220,7 +221,7 @@ const SpacesList: React.FC<SpacesListProps> = ({ limit, showTitle = true, onView
 
         {!limit && !isFiltering && displayCount < SPACES.length && (
           <div className="mt-20 flex justify-center">
-            <button 
+            <button
               type="button"
               id="spaces-btn-load-more"
               onClick={() => setDisplayCount(prev => prev + 3)}

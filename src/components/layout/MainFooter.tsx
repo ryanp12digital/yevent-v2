@@ -131,10 +131,26 @@ const MainFooter: React.FC<MainFooterProps> = ({ onNavigate }) => {
             <div className="space-y-10">
               <h4 className="text-[10px] font-bold text-slate-900 uppercase tracking-[0.2em]">Conheça a Yevent</h4>
               <ul className="space-y-5 text-sm text-slate-500 font-semibold uppercase tracking-widest text-[11px]">
-                <li><button id="footer-link-about" onClick={() => handleNavigate('home')} className="hover:text-blue-600 transition-colors">Quem somos</button></li>
-                <li><button id="footer-link-how-it-works" onClick={() => handleNavigate('home')} className="hover:text-blue-600 transition-colors">Como funciona</button></li>
-                <li><button id="footer-link-blog" onClick={() => handleNavigate('home')} className="hover:text-blue-600 transition-colors">Blog Corporativo</button></li>
-                <li><button id="footer-link-careers" onClick={() => handleNavigate('home')} className="hover:text-blue-600 transition-colors">Carreiras</button></li>
+                <li>
+                  <a
+                    href="https://api.whatsapp.com/send/?phone=558191870929&text=Gostaria+de+saber+mais+sobre+a+Yevent&type=phone_number&app_absent=0"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-blue-600 transition-colors"
+                  >
+                    Quem somos
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="https://api.whatsapp.com/send/?phone=558191870929&text=Gostaria+de+entender+como+a+Yevent+funciona&type=phone_number&app_absent=0"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-blue-600 transition-colors"
+                  >
+                    Como funciona
+                  </a>
+                </li>
               </ul>
             </div>
 
@@ -142,10 +158,46 @@ const MainFooter: React.FC<MainFooterProps> = ({ onNavigate }) => {
             <div className="space-y-10">
               <h4 className="text-[10px] font-bold text-slate-900 uppercase tracking-[0.2em]">Atendimento</h4>
               <ul className="space-y-5 text-sm text-slate-500 font-semibold uppercase tracking-widest text-[11px]">
-                <li><button id="footer-link-help" onClick={() => handleNavigate('home')} className="hover:text-blue-600 transition-colors">Centro de ajuda</button></li>
-                <li><button id="footer-link-partners" onClick={() => handleNavigate('home')} className="hover:text-blue-600 transition-colors">Seja um parceiro</button></li>
-                <li><button id="footer-link-cancellation" onClick={() => handleNavigate('home')} className="hover:text-blue-600 transition-colors">Políticas de cancelamento</button></li>
-                <li><button id="footer-link-ombudsman" onClick={() => handleNavigate('contact')} className="hover:text-blue-600 transition-colors">Ouvidoria</button></li>
+                <li>
+                  <a
+                    href="https://api.whatsapp.com/send/?phone=558191870929&text=Gostaria+de+ajuda+para+locar+uma+sala+na+Yevent&type=phone_number&app_absent=0"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-blue-600 transition-colors"
+                  >
+                    Centro de ajuda
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="https://api.whatsapp.com/send/?phone=558191870929&text=Tenho+interesse+em+ser+um+parceiro&type=phone_number&app_absent=0"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-blue-600 transition-colors"
+                  >
+                    Seja um parceiro
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="https://api.whatsapp.com/send/?phone=558191870929&text=D%C3%BAvidas+sobre+pol%C3%ADtica+de+cancelamento&type=phone_number&app_absent=0"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-blue-600 transition-colors"
+                  >
+                    Políticas de cancelamento
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="https://api.whatsapp.com/send/?phone=558191870929&text=Gostaria+de+entrar+em+contato+com+a+ouvidoria&type=phone_number&app_absent=0"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-blue-600 transition-colors"
+                  >
+                    Ouvidoria
+                  </a>
+                </li>
               </ul>
             </div>
 

@@ -1,7 +1,11 @@
 
 import SpacesList from '@/components/sections/SpacesList'
+import { getSpaces } from '@/actions/spaces'
+import { Space } from '@/data/spaces'
 
-export default function SpacesListingView() {
+export default async function SpacesListingView() {
+  const spaces = await getSpaces() as Space[]
+
   return (
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
       <div className="pt-32 pb-10 px-6 bg-slate-950 text-white text-center">
@@ -10,7 +14,7 @@ export default function SpacesListingView() {
           Explore nossa lista completa de ambientes corporativos projetados para o seu sucesso.
         </p>
       </div>
-      <SpacesList />
+      <SpacesList spaces={spaces} />
     </div>
   )
 }

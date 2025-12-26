@@ -1,9 +1,10 @@
 
-import { SPACES } from '@/data/spaces'
+import { getSpace } from '@/actions/spaces'
 import SpaceDetailView from '@/components/views/SpaceDetailView'
+import { Space } from '@/data/spaces'
 
 export async function generateMetadata({ params }: { params: { id: string } }) {
-  const space = SPACES.find(s => s.id === params.id)
+  const space = await getSpace(params.id) as Space
   if (!space) return {}
 
   return {
@@ -12,6 +13,7 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
   }
 }
 
-export default function SpacePage({ params }: { params: { id: string } }) {
-  return <SpaceDetailView id={params.id} />
+export default async function SpacePage({ params }: { params: { id: string } }) {
+  const space = await getSpace(params.id) as Space
+  return <SpaceDetailView space={space} />
 }

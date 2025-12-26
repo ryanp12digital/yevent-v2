@@ -5,6 +5,7 @@ import React, { useState } from 'react'
 import { Search, MapPin, Users, Building2 } from 'lucide-react'
 import Button from '../ui/Button'
 import { FilterCriteria } from '../../lib/types'
+import heroBg from '../../assets/HERO IMG BG - - 01 (1).webp'
 
 interface HeroProps {
   onSearch?: (filters: FilterCriteria) => void
@@ -30,8 +31,8 @@ const Hero: React.FC<HeroProps> = ({ onSearch }) => {
     <section id="hero-section" className="relative h-screen min-h-[800px] flex items-center justify-center pt-24 overflow-hidden">
       {/* Background Image fix - using standard img to ensure ESM compatibility */}
       <div className="absolute inset-0 z-0">
-        <img 
-          src="https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=1920&auto=format&fit=crop" 
+        <img
+          src={heroBg.src}
           alt="Luxury office space"
           className="w-full h-full object-cover"
         />
@@ -48,21 +49,21 @@ const Hero: React.FC<HeroProps> = ({ onSearch }) => {
             Encontre o local perfeito para seus eventos corporativos.
           </h1>
           <p className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto font-medium leading-relaxed drop-shadow-lg">
-            Encontre e reserve espaços corporativos de alto padrão em segundos. 
+            Encontre e reserve espaços corporativos de alto padrão em segundos.
             Ambientes que inspiram inovação e resultados.
           </p>
         </div>
 
         {/* Search Bar Re-designed for high-end look */}
         <div className="max-w-7xl mx-auto bg-white/95 backdrop-blur-xl rounded-4xl md:rounded-[2.5rem] p-2 md:p-4 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.4)] flex flex-col md:flex-row items-stretch md:items-center text-slate-800 animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-300 border border-white/20">
-          
+
           <div className="flex flex-col md:flex-row flex-1 items-stretch md:items-center">
             {/* Cidade */}
             <div className="flex-1 flex items-center px-6 py-4 md:py-2 border-b md:border-b-0 md:border-r border-slate-100 group transition-colors hover:bg-slate-50 rounded-2xl md:rounded-none">
               <MapPin className="text-blue-600 mr-4 w-6 h-6 shrink-0 opacity-70 group-hover:opacity-100 transition-opacity" />
               <div className="text-left w-full">
                 <span className="block text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-0.5">Localização</span>
-                <select 
+                <select
                   id="hero-select-city"
                   className="w-full bg-transparent outline-none font-semibold appearance-none cursor-pointer text-slate-900 text-sm md:text-base pr-4"
                   value={city}
@@ -81,7 +82,7 @@ const Hero: React.FC<HeroProps> = ({ onSearch }) => {
               <Building2 className="text-blue-600 mr-4 w-6 h-6 shrink-0 opacity-70 group-hover:opacity-100 transition-opacity" />
               <div className="text-left w-full">
                 <span className="block text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-0.5">Tipo de Espaço</span>
-                <select 
+                <select
                   id="hero-select-type"
                   className="w-full bg-transparent outline-none font-semibold appearance-none cursor-pointer text-slate-900 text-sm md:text-base pr-4"
                   value={type}
@@ -105,12 +106,12 @@ const Hero: React.FC<HeroProps> = ({ onSearch }) => {
                     {capacity >= 200 ? '200+' : capacity}
                   </span>
                 </div>
-                <input 
+                <input
                   id="hero-range-capacity"
-                  type="range" 
-                  className="w-full accent-blue-600 cursor-pointer h-1.5 bg-slate-100 rounded-lg appearance-none mt-2" 
-                  min="5" 
-                  max="200" 
+                  type="range"
+                  className="w-full accent-blue-600 cursor-pointer h-1.5 bg-slate-100 rounded-lg appearance-none mt-2"
+                  min="5"
+                  max="200"
                   step="5"
                   value={capacity}
                   onChange={(e) => setCapacity(Number(e.target.value))}
@@ -120,9 +121,9 @@ const Hero: React.FC<HeroProps> = ({ onSearch }) => {
           </div>
 
           <div className="p-2 md:p-0 md:pl-4">
-            <Button 
+            <Button
               id="hero-btn-search"
-              size="lg" 
+              size="lg"
               onClick={handleSearchClick}
               className="w-full md:w-auto md:rounded-2xl flex items-center justify-center py-5 md:py-5 md:px-10 shadow-2xl shadow-blue-500/20 hover:scale-[1.02] active:scale-95 transition-all bg-blue-600 border-none group"
             >

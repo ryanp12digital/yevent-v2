@@ -20,14 +20,15 @@ interface SpacesListProps {
   onSeeAll?: () => void
   seeAllHref?: string
   filters?: FilterCriteria
+  spaces: Space[]
 }
 
-const SpacesList: React.FC<SpacesListProps> = ({ limit, showTitle = true, onViewDetails, onSeeAll, seeAllHref, filters }) => {
+const SpacesList: React.FC<SpacesListProps> = ({ limit, showTitle = true, onViewDetails, onSeeAll, seeAllHref, filters, spaces }) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const [displayCount, setDisplayCount] = useState(limit || 6)
 
   // Filtragem dos espaços
-  const filteredSpaces = SPACES.filter(space => {
+  const filteredSpaces = spaces.filter(space => {
     if (!filters) return true;
 
     // Lógica da capacidade
@@ -80,7 +81,11 @@ const SpacesList: React.FC<SpacesListProps> = ({ limit, showTitle = true, onView
 
         <img
           id={`space-img-${space.id}`}
-          src={typeof space.image === 'string' ? space.image : space.image.src}
+          src={
+            Array.isArray(space.image)
+              ? space.image[0]
+              : (typeof space.image === 'string' ? space.image : space.image.src)
+          }
           alt={space.name}
           className="w-full h-full object-cover transition-all duration-1000 group-hover:scale-110"
         />
@@ -117,7 +122,9 @@ const SpacesList: React.FC<SpacesListProps> = ({ limit, showTitle = true, onView
             </div>
             <div>
               <span className="block text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Área</span>
-              <span className="text-xs font-semibold text-slate-900">{space.area}</span>
+              <span className="text-xs font-semibold text-slate-900">
+                {space.area && !space.area.includes('m²') ? `${space.area}m²` : space.area}
+              </span>
             </div>
           </div>
         </div>
@@ -219,7 +226,7 @@ const SpacesList: React.FC<SpacesListProps> = ({ limit, showTitle = true, onView
           </div>
         )}
 
-        {!limit && !isFiltering && displayCount < SPACES.length && (
+        {!limit && !isFiltering && displayCount < spaces.length && (
           <div className="mt-20 flex justify-center">
             <button
               type="button"

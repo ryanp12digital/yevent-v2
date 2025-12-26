@@ -9,6 +9,8 @@ import {
   Wind, ShieldCheck, MapPin, Calendar, Check, X, ZoomIn,
   Projector, Speaker, GlassWater
 } from 'lucide-react';
+
+import ImageCarousel from '../ui/ImageCarousel';
 import Button from '../ui/Button';
 import { formatCurrency, cn } from '../../lib/utils';
 import BookingForm from './BookingForm';
@@ -41,13 +43,16 @@ const SpaceDetail: React.FC<SpaceDetailProps> = ({ space, onBack }) => {
     water: { icon: GlassWater, label: 'Água Mineral' },
   };
 
-  // Simular uma galeria com a imagem principal e algumas aleatórias
-  const galleryImages = [
-    typeof space.image === 'string' ? space.image : space.image.src,
-    `https://picsum.photos/seed/${space.id}1/800/600`,
-    `https://picsum.photos/seed/${space.id}2/800/600`,
-    `https://picsum.photos/seed/${space.id}3/800/600`,
-  ];
+  // Get images array from space
+  const getSpaceImages = (): string[] => {
+    if (!space.image) return [];
+    if (Array.isArray(space.image)) return space.image;
+    if (typeof space.image === 'string') return [space.image];
+    // StaticImageData
+    return [space.image.src];
+  };
+
+  const spaceImages = getSpaceImages();
 
   const handleBack = () => {
     if (onBack) {
@@ -76,41 +81,8 @@ const SpaceDetail: React.FC<SpaceDetailProps> = ({ space, onBack }) => {
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
             <div className="lg:col-span-8 space-y-10">
-              {/* Galeria de Imagens */}
-              <div className="space-y-4">
-                <div
-                  className="aspect-video w-full rounded-3xl overflow-hidden shadow-xl cursor-zoom-in group relative"
-                  onClick={() => setLightboxImage(galleryImages[0])}
-                >
-                  <img
-                    src={galleryImages[0]}
-                    alt={space.name}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  />
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
-                    <ZoomIn className="text-white w-10 h-10 drop-shadow-md" />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-3 gap-4 h-32">
-                  {galleryImages.slice(1).map((img, idx) => (
-                    <div
-                      key={idx}
-                      className="rounded-2xl overflow-hidden bg-slate-100 cursor-pointer relative group"
-                      onClick={() => setLightboxImage(img)}
-                    >
-                      <img
-                        src={img}
-                        alt={`Galeria ${idx + 1}`}
-                        className="w-full h-full object-cover group-hover:opacity-80 transition-opacity"
-                      />
-                      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                        <ZoomIn className="text-white w-6 h-6 drop-shadow-md" />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
+              {/* Image Carousel */}
+              <ImageCarousel images={spaceImages} alt={space.name} />
 
               <div>
                 <div className="flex items-center gap-2 mb-4">
@@ -138,7 +110,9 @@ const SpaceDetail: React.FC<SpaceDetailProps> = ({ space, onBack }) => {
                     </div>
                     <div>
                       <span className="block text-xs font-bold text-slate-400 uppercase">Tamanho</span>
-                      <span className="font-semibold text-slate-900">{space.area}</span>
+                      <span className="font-semibold text-slate-900">
+                        {space.area && !space.area.includes('m²') ? `${space.area}m²` : space.area}
+                      </span>
                     </div>
                   </div>
                   <div className="flex items-center gap-3">

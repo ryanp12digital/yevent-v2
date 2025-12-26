@@ -19,7 +19,7 @@ import recifeSala7 from '@/assets/Recife/WEB/Rua Manuel de Brito - SALA 7 #1 - -
 export interface Space {
   id: string;
   name: string;
-  image: string | StaticImageData;
+  image: string | string[] | StaticImageData;
   city: string;
   address: string; // Added address field
   capacity: number;

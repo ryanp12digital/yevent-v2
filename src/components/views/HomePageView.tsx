@@ -6,7 +6,13 @@ import Hero from '@/components/sections/Hero'
 import SpacesList from '@/components/sections/SpacesList'
 import { FilterCriteria } from '@/lib/types'
 
-export default function HomePageView() {
+import { Space } from '@/data/spaces'
+
+interface HomePageViewProps {
+  initialSpaces: Space[]
+}
+
+export default function HomePageView({ initialSpaces }: HomePageViewProps) {
   const [filters, setFilters] = useState<FilterCriteria>({
     city: '',
     type: '',
@@ -26,7 +32,7 @@ export default function HomePageView() {
   return (
     <div className="animate-in fade-in duration-700">
       <Hero onSearch={handleSearch} />
-      
+
       {/* Seção de Transição */}
       <div className="relative py-24 bg-white overflow-hidden">
         <div className="max-w-7xl mx-auto px-6">
@@ -41,12 +47,13 @@ export default function HomePageView() {
               Conheça os espaços que estão transformando a forma como grandes marcas realizam seus eventos.
             </p>
           </div>
-          
-          <SpacesList 
-            limit={3} 
+
+          <SpacesList
+            limit={3}
             showTitle={false}
             filters={filters}
             seeAllHref="/spaces"
+            spaces={initialSpaces}
           />
         </div>
       </div>

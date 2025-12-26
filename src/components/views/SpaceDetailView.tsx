@@ -1,15 +1,13 @@
 
-import { SPACES } from '@/data/spaces'
+import { Space } from '@/data/spaces'
 import SpaceDetail from '@/components/features/SpaceDetail'
 import { notFound } from 'next/navigation'
 
 interface SpaceDetailViewProps {
-  id: string
+  space: Space
 }
 
-export default function SpaceDetailView({ id }: SpaceDetailViewProps) {
-  const space = SPACES.find(s => s.id === id)
-
+export default function SpaceDetailView({ space }: SpaceDetailViewProps) {
   if (!space) {
     notFound()
   }

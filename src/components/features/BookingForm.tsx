@@ -11,6 +11,7 @@ import { toast } from 'react-hot-toast';
 import { X, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 import { WEBHOOK_URL } from '../../lib/constants';
 import { maskPhone } from '../../lib/utils';
+import { sendWebhook } from '../../actions/webhook';
 
 
 interface BookingFormProps {
@@ -75,16 +76,10 @@ const BookingForm: React.FC<BookingFormProps> = ({ spaceId, spaceName, onClose }
     console.log('[Tech Lead Simulation] Enviando Lead para Webhook:', payload);
 
     try {
-      const response = await fetch(WEBHOOK_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-      });
+      const result = await sendWebhook(payload);
 
-      if (!response.ok) {
-        throw new Error('Falha no envio para o webhook');
+      if (!result.success) {
+        throw new Error(result.error || 'Falha no envio para o webhook');
       }
 
       setStatus('success');

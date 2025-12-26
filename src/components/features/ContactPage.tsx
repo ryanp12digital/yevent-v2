@@ -10,6 +10,7 @@ import Input from '../ui/Input';
 import { toast } from 'react-hot-toast';
 import { cn, maskPhone } from '../../lib/utils';
 import { WEBHOOK_URL } from '../../lib/constants';
+import { sendWebhook } from '../../actions/webhook';
 
 
 const ContactPage: React.FC = () => {
@@ -39,30 +40,24 @@ const ContactPage: React.FC = () => {
 
   const onSubmit = async (data: BookingFormData) => {
     try {
-      // Enviar para o webhook
-      const response = await fetch(WEBHOOK_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          ...data,
-          type: 'contact_form',
-          timestamp: new Date().toISOString(),
-        }),
+      // Enviar para o webhook via Server Action (mais robusto contra CORS)
+      const result = await sendWebhook({
+        ...data,
+        type: 'contact_form',
+        timestamp: new Date().toISOString(),
       });
 
-      if (!response.ok) {
-        throw new Error('Falha ao enviar para o webhook');
+      if (!result.success) {
+        throw new Error(result.error || 'Falha ao enviar para o webhook');
       }
 
-      console.log('Contato Geral Payload enviado:', data);
+      console.log('Contato Geral Payload enviado via Action');
       setIsSubmitted(true);
       toast.success('Mensagem enviada com sucesso!');
       reset();
     } catch (err) {
-      console.error('Webhook error:', err);
-      toast.error('Ocorreu um erro ao enviar sua mensagem.');
+      console.error('Webhook Client Error:', err);
+      toast.error('Ocorreu um erro ao enviar sua mensagem. Por favor, tente novamente.');
     }
   };
 

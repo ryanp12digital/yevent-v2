@@ -26,10 +26,10 @@ export default function PrivacyPolicyPage() {
                     <section>
                         <h2 className="text-2xl font-semibold text-slate-800 mb-4">Definições</h2>
                         <ul className="list-disc pl-5 space-y-2">
-                            <li><strong>"Dados Pessoais"</strong> são informações que identificam ou podem identificar uma pessoa natural.</li>
-                            <li><strong>"Dados Pessoais Sensíveis"</strong> são informações que revelam características pessoais íntimas, como origem racial, convicções religiosas, opiniões políticas, dados genéticos ou biométricos.</li>
-                            <li><strong>"Tratamento de Dados Pessoais"</strong> abrange qualquer operação com Dados Pessoais, como coleta, registro, armazenamento, uso, compartilhamento ou destruição.</li>
-                            <li><strong>"Leis de Proteção de Dados"</strong> são todas as leis que regulamentam o Tratamento de Dados Pessoais, incluindo a LGPD (Lei Geral de Proteção de Dados Pessoais, Lei nº 13.709/18).</li>
+                            <li><strong>&quot;Dados Pessoais&quot;</strong> são informações que identificam ou podem identificar uma pessoa natural.</li>
+                            <li><strong>&quot;Dados Pessoais Sensíveis&quot;</strong> são informações que revelam características pessoais íntimas, como origem racial, convicções religiosas, opiniões políticas, dados genéticos ou biométricos.</li>
+                            <li><strong>&quot;Tratamento de Dados Pessoais&quot;</strong> abrange qualquer operação com Dados Pessoais, como coleta, registro, armazenamento, uso, compartilhamento ou destruição.</li>
+                            <li><strong>&quot;Leis de Proteção de Dados&quot;</strong> são todas as leis que regulamentam o Tratamento de Dados Pessoais, incluindo a LGPD (Lei Geral de Proteção de Dados Pessoais, Lei nº 13.709/18).</li>
                         </ul>
                     </section>
 

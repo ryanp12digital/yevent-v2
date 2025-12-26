@@ -9,6 +9,8 @@ import Button from '../ui/Button';
 import Input from '../ui/Input';
 import { toast } from 'react-hot-toast';
 import { X, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
+import { WEBHOOK_URL } from '../../lib/constants';
+
 
 interface BookingFormProps {
   spaceId?: string;
@@ -52,29 +54,31 @@ const BookingForm: React.FC<BookingFormProps> = ({ spaceId, spaceName, onClose }
   const onSubmit = async (data: BookingFormData) => {
     setStatus('loading');
     setErrorMessage(null);
-    
+
     // Payload robusto para o webhook
     const payload = {
       ...data,
       space_id: spaceId,
       space_name: spaceName,
       utms,
+      type: 'booking_form',
       timestamp: new Date().toISOString(),
     };
 
     console.log('[Tech Lead Simulation] Enviando Lead para Webhook:', payload);
 
     try {
-      // Simular delay de rede e 10% de chance de erro para testar feedback visual
-      await new Promise((resolve, reject) => {
-        setTimeout(() => {
-          if (Math.random() < 0.1) {
-            reject(new Error('Falha na conexão com o servidor.'));
-          } else {
-            resolve(true);
-          }
-        }, 1800);
+      const response = await fetch(WEBHOOK_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
       });
+
+      if (!response.ok) {
+        throw new Error('Falha no envio para o webhook');
+      }
 
       setStatus('success');
       toast.success('Reserva solicitada!');
@@ -88,7 +92,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ spaceId, spaceName, onClose }
   };
 
   return (
-    <div 
+    <div
       id="booking-modal-overlay"
       className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
       onClick={(e) => {
@@ -100,7 +104,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ spaceId, spaceName, onClose }
     >
       <div className="relative w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300">
         {status !== 'loading' && (
-          <button 
+          <button
             id="booking-btn-close"
             onClick={onClose}
             className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 transition-colors z-10"
@@ -118,7 +122,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ spaceId, spaceName, onClose }
               </div>
               <h2 className="text-2xl font-bold text-slate-900 mb-3">Obrigado pela sua reserva!</h2>
               <p className="text-slate-500 mb-8">
-                Recebemos sua solicitação para o espaço <strong>{spaceName}</strong>. 
+                Recebemos sua solicitação para o espaço <strong>{spaceName}</strong>.
                 Nossa equipe entrará em contato em breve via e-mail ou WhatsApp.
               </p>
               <Button id="booking-btn-success-close" onClick={onClose} className="w-full">
@@ -155,7 +159,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ spaceId, spaceName, onClose }
                   {...register('name')}
                   error={errors.name?.message}
                 />
-                
+
                 <Input
                   id="booking-input-email"
                   label="E-mail corporativo"
@@ -187,10 +191,10 @@ const BookingForm: React.FC<BookingFormProps> = ({ spaceId, spaceName, onClose }
                   {errors.message?.message && <p className="text-xs text-red-500">{errors.message?.message}</p>}
                 </div>
 
-                <Button 
+                <Button
                   id="booking-btn-submit"
-                  type="submit" 
-                  className="w-full flex items-center justify-center gap-2" 
+                  type="submit"
+                  className="w-full flex items-center justify-center gap-2"
                   disabled={status === 'loading'}
                 >
                   {status === 'loading' ? (

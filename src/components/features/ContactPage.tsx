@@ -9,6 +9,8 @@ import Button from '../ui/Button';
 import Input from '../ui/Input';
 import { toast } from 'react-hot-toast';
 import { cn } from '../../lib/utils';
+import { WEBHOOK_URL } from '../../lib/constants';
+
 
 const ContactPage: React.FC = () => {
   const [isSubmitted, setIsSubmitted] = React.useState(false);
@@ -30,13 +32,29 @@ const ContactPage: React.FC = () => {
 
   const onSubmit = async (data: BookingFormData) => {
     try {
-      // Simular envio
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      console.log('Contato Geral Payload:', data);
+      // Enviar para o webhook
+      const response = await fetch(WEBHOOK_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...data,
+          type: 'contact_form',
+          timestamp: new Date().toISOString(),
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Falha ao enviar para o webhook');
+      }
+
+      console.log('Contato Geral Payload enviado:', data);
       setIsSubmitted(true);
       toast.success('Mensagem enviada com sucesso!');
       reset();
     } catch (err) {
+      console.error('Webhook error:', err);
       toast.error('Ocorreu um erro ao enviar sua mensagem.');
     }
   };
@@ -54,28 +72,28 @@ const ContactPage: React.FC = () => {
           {/* Informações de Contato */}
           <div className="lg:col-span-5 space-y-8 animate-in fade-in slide-in-from-left-4 duration-700">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-6">
-              <ContactCard 
-                icon={Phone} 
-                title="Telefone" 
-                content="+55 (81) 9 9187-0929" 
+              <ContactCard
+                icon={Phone}
+                title="Telefone"
+                content="+55 (81) 9 9187-0929"
                 subContent="Seg a Sex, 9h às 18h"
               />
-              <ContactCard 
-                icon={Mail} 
-                title="E-mail" 
-                content="contato@yevent.com.br" 
+              <ContactCard
+                icon={Mail}
+                title="E-mail"
+                content="contato@yevent.com.br"
                 subContent="Suporte corporativo 24/7"
               />
-              <ContactCard 
-                icon={MapPin} 
-                title="Sede" 
-                content="Recife, PE" 
+              <ContactCard
+                icon={MapPin}
+                title="Sede"
+                content="Recife, PE"
                 subContent="Rua Manuel de Brito, 311"
               />
-              <ContactCard 
-                icon={Clock} 
-                title="Horário" 
-                content="09:00 - 18:00" 
+              <ContactCard
+                icon={Clock}
+                title="Horário"
+                content="09:00 - 18:00"
                 subContent="Atendimento presencial"
               />
             </div>
@@ -108,34 +126,34 @@ const ContactPage: React.FC = () => {
               ) : (
                 <form id="contact-form" onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <Input 
+                    <Input
                       id="contact-input-name"
-                      label="Nome" 
-                      placeholder="Como podemos te chamar?" 
-                      {...register('name')} 
+                      label="Nome"
+                      placeholder="Como podemos te chamar?"
+                      {...register('name')}
                       error={errors.name?.message}
                       className="rounded-2xl px-6 py-4"
                     />
-                    <Input 
+                    <Input
                       id="contact-input-email"
-                      label="E-mail" 
-                      placeholder="seu@email.com.br" 
-                      {...register('email')} 
+                      label="E-mail"
+                      placeholder="seu@email.com.br"
+                      {...register('email')}
                       error={errors.email?.message}
                       className="rounded-2xl px-6 py-4"
                     />
                   </div>
-                  <Input 
+                  <Input
                     id="contact-input-phone"
-                    label="Telefone" 
-                    placeholder="(00) 00000-0000" 
-                    {...register('phone')} 
+                    label="Telefone"
+                    placeholder="(00) 00000-0000"
+                    {...register('phone')}
                     error={errors.phone?.message}
                     className="rounded-2xl px-6 py-4"
                   />
                   <div className="space-y-2">
                     <label className="text-sm font-semibold text-slate-700">Mensagem</label>
-                    <textarea 
+                    <textarea
                       id="contact-textarea-message"
                       className={cn(
                         "w-full px-6 py-4 bg-slate-50 border rounded-2xl outline-none transition-all h-32 font-medium text-slate-800 focus:ring-2 focus:ring-blue-600/20",
@@ -146,9 +164,9 @@ const ContactPage: React.FC = () => {
                     />
                     {errors.message && <p className="text-xs text-red-500">{errors.message.message}</p>}
                   </div>
-                  <Button 
+                  <Button
                     id="contact-btn-submit"
-                    type="submit" 
+                    type="submit"
                     className="w-full py-5 rounded-2xl flex items-center justify-center gap-3 shadow-xl shadow-blue-200"
                     disabled={isSubmitting}
                   >

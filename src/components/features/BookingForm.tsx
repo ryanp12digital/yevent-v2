@@ -10,6 +10,7 @@ import Input from '../ui/Input';
 import { toast } from 'react-hot-toast';
 import { X, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 import { WEBHOOK_URL } from '../../lib/constants';
+import { maskPhone } from '../../lib/utils';
 
 
 interface BookingFormProps {
@@ -44,12 +45,18 @@ const BookingForm: React.FC<BookingFormProps> = ({ spaceId, spaceName, onClose }
     handleSubmit,
     formState: { errors },
     reset,
+    setValue,
   } = useForm<BookingFormData>({
     resolver: zodResolver(bookingSchema),
     defaultValues: {
       space_id: spaceId,
     },
   });
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const masked = maskPhone(e.target.value);
+    setValue('phone', masked, { shouldValidate: true });
+  };
 
   const onSubmit = async (data: BookingFormData) => {
     setStatus('loading');
@@ -176,6 +183,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ spaceId, spaceName, onClose }
                   placeholder="(00) 00000-0000"
                   disabled={status === 'loading'}
                   {...register('phone')}
+                  onChange={handlePhoneChange}
                   error={errors.phone?.message}
                 />
 

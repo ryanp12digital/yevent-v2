@@ -12,6 +12,7 @@ export const bookingSchema = z.object({
     .email('E-mail inválido')
     .regex(emailRegex, 'Formato de e-mail inválido ou caracteres não permitidos'),
   phone: z.string().min(10, 'Telefone inválido (mínimo 10 dígitos)'),
+  subject: z.string().optional(),
   space_id: z.string().optional(),
   message: z.string().min(5, 'Por favor, descreva brevemente seu evento'),
 });

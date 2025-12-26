@@ -8,7 +8,7 @@ import { bookingSchema, type BookingFormData } from '../../lib/schemas';
 import Button from '../ui/Button';
 import Input from '../ui/Input';
 import { toast } from 'react-hot-toast';
-import { cn } from '../../lib/utils';
+import { cn, maskPhone } from '../../lib/utils';
 import { WEBHOOK_URL } from '../../lib/constants';
 
 
@@ -20,15 +20,22 @@ const ContactPage: React.FC = () => {
     handleSubmit,
     formState: { errors, isSubmitting },
     reset,
+    setValue,
   } = useForm<BookingFormData>({
     resolver: zodResolver(bookingSchema),
     defaultValues: {
       name: '',
       email: '',
       phone: '',
-      message: ''
+      message: '',
+      subject: 'LOCAÇÃO DE SALA'
     }
   });
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const masked = maskPhone(e.target.value);
+    setValue('phone', masked, { shouldValidate: true });
+  };
 
   const onSubmit = async (data: BookingFormData) => {
     try {
@@ -143,14 +150,37 @@ const ContactPage: React.FC = () => {
                       className="rounded-2xl px-6 py-4"
                     />
                   </div>
-                  <Input
-                    id="contact-input-phone"
-                    label="Telefone"
-                    placeholder="(00) 00000-0000"
-                    {...register('phone')}
-                    error={errors.phone?.message}
-                    className="rounded-2xl px-6 py-4"
-                  />
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <label className="text-sm font-semibold text-slate-700">Assunto</label>
+                      <select
+                        id="contact-select-subject"
+                        className={cn(
+                          "w-full px-6 py-4 bg-slate-50 border rounded-2xl outline-none transition-all font-medium text-slate-800 focus:ring-2 focus:ring-blue-600/20 shadow-sm",
+                          errors.subject ? "border-red-500" : "border-slate-200 focus:border-blue-600"
+                        )}
+                        {...register('subject')}
+                      >
+                        <option value="LOCAÇÃO DE SALA">LOCAÇÃO DE SALA</option>
+                        <option value="DUVIDAS">DUVIDAS</option>
+                        <option value="RETORNO">RETORNO</option>
+                        <option value="CANCELAR CONTRATO">CANCELAR CONTRATO</option>
+                        <option value="ADICIONAR UMA SALA">ADICIONAR UMA SALA</option>
+                        <option value="SUGESTÕES DE MELHORIA">SUGESTÕES DE MELHORIA</option>
+                        <option value="FEEDBACK">FEEDBACK</option>
+                      </select>
+                      {errors.subject && <p className="text-xs text-red-500">{errors.subject.message}</p>}
+                    </div>
+                    <Input
+                      id="contact-input-phone"
+                      label="Telefone"
+                      placeholder="(00) 00000-0000"
+                      {...register('phone')}
+                      onChange={handlePhoneChange}
+                      error={errors.phone?.message}
+                      className="rounded-2xl px-6 py-4"
+                    />
+                  </div>
                   <div className="space-y-2">
                     <label className="text-sm font-semibold text-slate-700">Mensagem</label>
                     <textarea

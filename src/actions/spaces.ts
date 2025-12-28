@@ -4,6 +4,7 @@ import { put } from '@vercel/blob';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { createServerSupabaseClient } from '@/lib/supabase';
+import { isSuperAdmin } from '@/actions/users';
 
 export async function getSpaces() {
     const supabase = createServerSupabaseClient();
@@ -49,7 +50,9 @@ export async function createSpace(formData: FormData) {
         .eq('id', user.id)
         .single();
 
-    if (dbUser?.role !== "admin") {
+    const superAdmin = await isSuperAdmin();
+
+    if (dbUser?.role !== "admin" && !superAdmin) {
         throw new Error("Não autorizado");
     }
 
@@ -118,7 +121,9 @@ export async function updateSpace(id: string, formData: FormData) {
         .eq('id', user.id)
         .single();
 
-    if (dbUser?.role !== "admin") {
+    const superAdmin = await isSuperAdmin();
+
+    if (dbUser?.role !== "admin" && !superAdmin) {
         throw new Error("Não autorizado");
     }
 
@@ -191,7 +196,9 @@ export async function deleteSpace(id: string) {
         .eq('id', user.id)
         .single();
 
-    if (dbUser?.role !== "admin") {
+    const superAdmin = await isSuperAdmin();
+
+    if (dbUser?.role !== "admin" && !superAdmin) {
         throw new Error("Não autorizado");
     }
 

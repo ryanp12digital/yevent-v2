@@ -37,6 +37,7 @@ export default function SpaceForm({ initialData, action, readOnly = false }: Spa
     const [imagePreviews, setImagePreviews] = useState<string[]>(getInitialImages());
     const [description, setDescription] = useState((initialData as any)?.description || '');
     const [isGeneratingAI, startGeneratingAI] = useTransition();
+    const [isSaving, startSaving] = useTransition();
     const [aiError, setAiError] = useState<string | null>(null);
 
     const handleImagesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -84,12 +85,20 @@ export default function SpaceForm({ initialData, action, readOnly = false }: Spa
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        const formData = new FormData(e.currentTarget);
+        const form = e.currentTarget;
+        const formData = new FormData(form);
 
         // Add existing images to formData
         formData.set('existingImages', JSON.stringify(imagePreviews.filter(img => img.startsWith('http'))));
 
-        await action(formData);
+        startSaving(async () => {
+            try {
+                await action(formData);
+            } catch (error) {
+                console.error("Erro ao salvar:", error);
+                alert("Erro ao salvar sala. Tente novamente.");
+            }
+        });
     };
 
     return (
@@ -139,7 +148,7 @@ export default function SpaceForm({ initialData, action, readOnly = false }: Spa
                 {/* Description with AI */}
                 <div className="md:col-span-2">
                     <div className="flex items-center justify-between mb-1">
-                        <label className="block text-sm font-medium text-gray-700">Descrição</label>
+                        <label className="block text-sm font-medium text-gray-700">Descrição da sala</label>
                         {!readOnly && (
                             <button
                                 type="button"
@@ -313,9 +322,20 @@ export default function SpaceForm({ initialData, action, readOnly = false }: Spa
                 <div className="flex justify-end pt-4">
                     <button
                         type="submit"
-                        className="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                        disabled={isSaving}
+                        className="ml-3 inline-flex justify-center items-center py-2 px-6 border border-transparent shadow-sm text-sm font-bold uppercase tracking-widest rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed min-w-[140px]"
                     >
-                        Salvar Sala
+                        {isSaving ? (
+                            <>
+                                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                Salvando...
+                            </>
+                        ) : (
+                            'Salvar Sala'
+                        )}
                     </button>
                 </div>
             )}

@@ -27,6 +27,7 @@ export interface Space {
   tags: string[] | null;
   price?: string | null;
   amenities: string[] | null;
+  description?: string | null;
   rules?: string[] | null;
   createdAt?: string | null;
 }

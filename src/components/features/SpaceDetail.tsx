@@ -128,13 +128,17 @@ const SpaceDetail: React.FC<SpaceDetailProps> = ({ space, onBack }) => {
                 </div>
 
                 <div className="prose prose-slate max-w-none">
-                  <h3 className="text-2xl font-semibold mb-4 text-slate-900">Sobre o espaço</h3>
-                  <p className="text-slate-600 leading-relaxed mb-6 font-medium">
-                    Este espaço foi meticulosamente planejado para atender às demandas de eventos corporativos modernos. Localizado estrategicamente no centro financeiro de {space.city}, oferece a infraestrutura completa para treinamentos, workshops e reuniões de alto nível.
-                  </p>
-                  <p className="text-slate-600 leading-relaxed font-medium">
-                    O ambiente conta com iluminação natural, mobiliário ergonômico e isolamento acústico de primeira linha, garantindo que seu evento ocorra sem interrupções e com o máximo de conforto para todos os participantes.
-                  </p>
+                  <div className="prose prose-slate max-w-none">
+                    <h3 className="text-2xl font-semibold mb-4 text-slate-900">Descrição da sala</h3>
+                    <p className="text-slate-600 leading-relaxed mb-6 font-medium whitespace-pre-wrap">
+                      {space.description || (
+                        <>
+                          Este espaço foi meticulosamente planejado para atender às demandas de eventos corporativos modernos.
+                          Oferece a infraestrutura completa para treinamentos, workshops e reuniões de alto nível.
+                        </>
+                      )}
+                    </p>
+                  </div>
                 </div>
               </div>
 

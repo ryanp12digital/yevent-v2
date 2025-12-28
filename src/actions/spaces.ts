@@ -114,7 +114,7 @@ export async function createSpace(formData: FormData) {
 
     if (error) {
         console.error('Error creating space:', error);
-        throw new Error("Erro ao criar espaço");
+        throw new Error(`Erro ao criar espaço: ${error.message} - ${error.details || ''}`);
     }
 
     revalidatePath('/dashboard');

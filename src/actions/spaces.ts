@@ -1,6 +1,6 @@
 'use server';
 
-import { put } from '@vercel/blob';
+// import { put } from '@vercel/blob'; (Removed Vercel Blob)
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { createServerSupabaseClient } from '@/lib/supabase';
@@ -69,15 +69,30 @@ export async function createSpace(formData: FormData) {
     const tags = formData.getAll('tags') as string[];
     const amenities = formData.getAll('amenities') as string[];
 
-    // Upload all images to Vercel Blob
+    // Upload all images to Supabase Storage
     const imageUrls: string[] = [];
     for (const imageFile of imageFiles) {
         if (imageFile && imageFile.size > 0) {
-            const blob = await put(imageFile.name, imageFile, {
-                access: 'public',
-                addRandomSuffix: true,
-            });
-            imageUrls.push(blob.url);
+            const fileExt = imageFile.name.split('.').pop();
+            const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+            const filePath = `${fileName}`;
+
+            const { error: uploadError } = await supabase
+                .storage
+                .from('spaces')
+                .upload(filePath, imageFile);
+
+            if (uploadError) {
+                console.error('Error uploading image to Supabase:', uploadError);
+                continue; // Skip this image if upload fails
+            }
+
+            const { data: { publicUrl } } = supabase
+                .storage
+                .from('spaces')
+                .getPublicUrl(filePath);
+
+            imageUrls.push(publicUrl);
         }
     }
 
@@ -141,15 +156,30 @@ export async function updateSpace(id: string, formData: FormData) {
     const tags = formData.getAll('tags') as string[];
     const amenities = formData.getAll('amenities') as string[];
 
-    // Upload new images
+    // Upload new images to Supabase Storage
     const newImageUrls: string[] = [];
     for (const imageFile of newImageFiles) {
         if (imageFile && imageFile.size > 0) {
-            const blob = await put(imageFile.name, imageFile, {
-                access: 'public',
-                addRandomSuffix: true,
-            });
-            newImageUrls.push(blob.url);
+            const fileExt = imageFile.name.split('.').pop();
+            const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+            const filePath = `${fileName}`;
+
+            const { error: uploadError } = await supabase
+                .storage
+                .from('spaces')
+                .upload(filePath, imageFile);
+
+            if (uploadError) {
+                console.error('Error uploading image to Supabase:', uploadError);
+                continue;
+            }
+
+            const { data: { publicUrl } } = supabase
+                .storage
+                .from('spaces')
+                .getPublicUrl(filePath);
+
+            newImageUrls.push(publicUrl);
         }
     }
 

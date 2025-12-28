@@ -4,7 +4,7 @@ import { getSpaces } from '@/actions/spaces'
 import { Space } from '@/data/spaces'
 
 export default async function SpacesListingView() {
-  const spaces = await getSpaces() as Space[]
+  const spaces = await getSpaces() as any as Space[]
 
   return (
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">

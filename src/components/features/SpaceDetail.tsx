@@ -86,12 +86,13 @@ const SpaceDetail: React.FC<SpaceDetailProps> = ({ space, onBack }) => {
 
               <div>
                 <div className="flex items-center gap-2 mb-4">
-                  {space.tags.map(tag => (
+                  {space.tags && space.tags.map(tag => (
                     <span key={tag} className="px-3 py-1 bg-blue-50 text-blue-600 text-[10px] font-bold uppercase rounded-full">
                       {tag}
                     </span>
                   ))}
                 </div>
+
                 <h1 id="detail-title" className="text-3xl md:text-5xl font-semibold text-slate-900 mb-6">{space.name}</h1>
 
                 <div className="flex flex-wrap gap-8 mb-10 pb-10 border-b border-slate-100">
@@ -187,7 +188,7 @@ const SpaceDetail: React.FC<SpaceDetailProps> = ({ space, onBack }) => {
                   <div>
                     <span className="block text-sm font-bold text-slate-400 uppercase mb-1">Valor do turno</span>
                     <div className="text-3xl font-semibold text-slate-900 tracking-tighter">
-                      {space.price ? formatCurrency(space.price) : 'Sob Consulta'}
+                      {space.price ? formatCurrency(Number(space.price)) : 'Sob Consulta'}
                     </div>
                   </div>
                   <div className="px-3 py-1 bg-green-50 text-green-600 text-[10px] font-bold rounded-full border border-green-100 uppercase">

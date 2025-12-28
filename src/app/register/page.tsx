@@ -6,38 +6,39 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Loader2, Mail, Lock, ArrowRight, Eye, EyeOff } from "lucide-react";
+import { Loader2, Mail, Lock, User, ArrowRight, Eye, EyeOff } from "lucide-react";
 
-import { LoginSchema } from "@/lib/schemas/auth";
-import { login } from "@/actions/auth";
+import { RegisterSchema } from "@/lib/schemas/auth";
+import { register } from "@/actions/auth";
 import { toast } from "react-hot-toast";
 
-export default function LoginPage() {
+export default function RegisterPage() {
     const [isPending, startTransition] = useTransition();
     const [showPassword, setShowPassword] = useState(false);
 
-    const form = useForm<z.infer<typeof LoginSchema>>({
-        resolver: zodResolver(LoginSchema),
+    const form = useForm<z.infer<typeof RegisterSchema>>({
+        resolver: zodResolver(RegisterSchema),
         defaultValues: {
+            name: "",
             email: "",
             password: "",
         },
     });
 
-    const onSubmit = (values: z.infer<typeof LoginSchema>) => {
+    const onSubmit = (values: z.infer<typeof RegisterSchema>) => {
         startTransition(() => {
-            login(values).then((data) => {
+            register(values).then((data) => {
                 if (data?.error) {
                     toast.error(data.error);
                 } else {
-                    toast.success("Login realizado com sucesso!");
+                    toast.success("Conta criada com sucesso! Verifique seu email.");
                 }
             });
         });
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-[#F8F9FA] px-4">
+        <div className="min-h-screen flex items-center justify-center bg-[#F8F9FA] px-4 py-8">
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -51,13 +52,29 @@ export default function LoginPage() {
                                 Yevent
                             </span>
                         </Link>
-                        <h1 className="text-2xl font-bold text-gray-900 mb-2">Bem-vindo de volta!</h1>
+                        <h1 className="text-2xl font-bold text-gray-900 mb-2">Crie sua conta</h1>
                         <p className="text-gray-500 text-sm">
-                            Digite suas credenciais para acessar o painel.
+                            Comece a organizar seus eventos hoje mesmo.
                         </p>
                     </div>
 
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium text-gray-700 ml-1">Nome completo</label>
+                            <div className="relative">
+                                <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                                <input
+                                    {...form.register("name")}
+                                    type="text"
+                                    placeholder="Seu nome"
+                                    className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm"
+                                />
+                            </div>
+                            {form.formState.errors.name && (
+                                <p className="text-red-500 text-xs ml-1">{form.formState.errors.name.message}</p>
+                            )}
+                        </div>
+
                         <div className="space-y-2">
                             <label className="text-sm font-medium text-gray-700 ml-1">Email</label>
                             <div className="relative">
@@ -75,15 +92,7 @@ export default function LoginPage() {
                         </div>
 
                         <div className="space-y-2">
-                            <div className="flex justify-between items-center ml-1">
-                                <label className="text-sm font-medium text-gray-700">Senha</label>
-                                <Link
-                                    href="/reset-password"
-                                    className="text-xs text-blue-600 hover:text-blue-700 font-medium"
-                                >
-                                    Esqueceu a senha?
-                                </Link>
-                            </div>
+                            <label className="text-sm font-medium text-gray-700 ml-1">Senha</label>
                             <div className="relative">
                                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                                 <input
@@ -107,6 +116,11 @@ export default function LoginPage() {
                             {form.formState.errors.password && (
                                 <p className="text-red-500 text-xs ml-1">{form.formState.errors.password.message}</p>
                             )}
+                            <ul className="text-xs text-gray-400 list-disc list-inside ml-1 space-y-1">
+                                <li>Mínimo 8 caracteres</li>
+                                <li>Pelo menos uma letra maiúscula e minúscula</li>
+                                <li>Pelo menos um número e um símbolo</li>
+                            </ul>
                         </div>
 
                         <button
@@ -118,7 +132,7 @@ export default function LoginPage() {
                                 <Loader2 className="w-5 h-5 animate-spin" />
                             ) : (
                                 <>
-                                    Entrar
+                                    Criar conta
                                     <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                                 </>
                             )}
@@ -127,12 +141,12 @@ export default function LoginPage() {
 
                     <div className="mt-8 text-center">
                         <p className="text-sm text-gray-500">
-                            Não tem uma conta?{" "}
+                            Já tem uma conta?{" "}
                             <Link
-                                href="/register"
+                                href="/login"
                                 className="text-blue-600 hover:text-blue-700 font-medium hover:underline"
                             >
-                                Cadastre-se gratuitamente
+                                Fazer login
                             </Link>
                         </p>
                     </div>

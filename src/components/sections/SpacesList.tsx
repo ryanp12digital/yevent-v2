@@ -37,7 +37,7 @@ const SpacesList: React.FC<SpacesListProps> = ({ limit, showTitle = true, onView
 
     // Verifica se o tipo está no nome ou nas tags
     const matchType = !filters.type || filters.type === '' ||
-      space.tags.some(tag => tag.toLowerCase().includes(filters.type.toLowerCase())) ||
+      (space.tags && space.tags.some(tag => tag.toLowerCase().includes(filters.type.toLowerCase()))) ||
       space.name.toLowerCase().includes(filters.type.toLowerCase());
 
     return matchCapacity && matchCity && matchType;
@@ -133,7 +133,7 @@ const SpacesList: React.FC<SpacesListProps> = ({ limit, showTitle = true, onView
           <div>
             <span className="block text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Investimento</span>
             <div className="text-slate-900 font-semibold text-xl md:text-2xl tracking-tighter">
-              {space.price ? formatCurrency(space.price) : 'Consulte'}
+              {space.price ? formatCurrency(Number(space.price)) : 'Consulte'}
             </div>
           </div>
           <div

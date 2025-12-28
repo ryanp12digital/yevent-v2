@@ -2,10 +2,9 @@
 import type { Metadata } from 'next'
 import { Poppins } from 'next/font/google'
 import './globals.css'
-import MainNavbar from '@/components/layout/MainNavbar'
-import MainFooter from '@/components/layout/MainFooter'
 import { Toaster } from 'react-hot-toast'
 import CookieConsent from '@/components/views/CookieConsent'
+import ConditionalLayout from '@/components/layout/ConditionalLayout'
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -17,6 +16,9 @@ export const metadata: Metadata = {
   title: 'Yevent - Locais Exclusivos para Eventos Corporativos',
   description: 'Plataforma premium para reserva de salas de reunião, auditórios e espaços de alto padrão.',
   keywords: ['eventos corporativos', 'aluguel de salas', 'auditórios', 'reuniões', 'Yevent', 'luxo'],
+  verification: {
+    google: 'cfNQ7Na_dq7mWzUO1SXhzSXPtOQxcGuVBxQkVdx5uUs',
+  }
 }
 
 import Script from 'next/script'
@@ -48,11 +50,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             style={{ display: 'none', visibility: 'hidden' }}
           />
         </noscript>
-        <MainNavbar />
-        <main className="min-h-screen">
+        <ConditionalLayout>
           {children}
-        </main>
-        <MainFooter />
+        </ConditionalLayout>
         <Toaster position="bottom-right" />
         <CookieConsent />
       </body>

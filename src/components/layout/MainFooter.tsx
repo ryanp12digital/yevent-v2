@@ -161,6 +161,16 @@ const MainFooter: React.FC<MainFooterProps> = ({ onNavigate }) => {
                     Dashboard
                   </a>
                 </li>
+                <li>
+                  <a
+                    href="/login"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-blue-600 transition-colors"
+                  >
+                    login
+                  </a>
+                </li>
               </ul>
             </div>
 

@@ -1,28 +1,65 @@
 'use server';
 
-import { sql } from '@vercel/postgres';
 import { put } from '@vercel/blob';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
+import { createServerSupabaseClient } from '@/lib/supabase';
 
 export async function getSpaces() {
-    const { rows } = await sql`SELECT * FROM spaces ORDER BY created_at DESC`;
-    return rows;
+    const supabase = createServerSupabaseClient();
+    const { data, error } = await supabase
+        .from('spaces')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+    if (error) {
+        console.error('Error fetching spaces:', error);
+        return [];
+    }
+    return data || [];
 }
 
 export async function getSpace(id: string) {
-    const { rows } = await sql`SELECT * FROM spaces WHERE id = ${id}`;
-    return rows[0];
+    const supabase = createServerSupabaseClient();
+    const { data, error } = await supabase
+        .from('spaces')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+    if (error) {
+        console.error('Error fetching space:', error);
+        return null;
+    }
+    return data;
 }
 
 export async function createSpace(formData: FormData) {
+    const supabase = createServerSupabaseClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+        throw new Error("Não autenticado");
+    }
+
+    // Check admin role
+    const { data: dbUser } = await supabase
+        .from('users')
+        .select('role')
+        .eq('id', user.id)
+        .single();
+
+    if (dbUser?.role !== "admin") {
+        throw new Error("Não autorizado");
+    }
+
     const name = formData.get('name') as string;
     const description = formData.get('description') as string;
     const city = formData.get('city') as string;
     const address = formData.get('address') as string;
     const capacity = parseInt(formData.get('capacity') as string) || 0;
     const area = formData.get('area') as string;
-    const price = parseFloat(formData.get('price') as string) || 0;
+    const price = formData.get('price') as string;
 
     // Handle multiple images
     const imageFiles = formData.getAll('images') as File[];
@@ -41,24 +78,57 @@ export async function createSpace(formData: FormData) {
         }
     }
 
-    // Insert with image array
-    await sql`
-    INSERT INTO spaces (name, description, image, city, address, capacity, area, price, tags, amenities)
-    VALUES (${name}, ${description}, ${imageUrls as any}, ${city}, ${address}, ${capacity}, ${area}, ${price}, ${tags as any}, ${amenities as any})
-  `;
+    // Insert with Supabase
+    const { error } = await supabase
+        .from('spaces')
+        .insert({
+            name,
+            description,
+            image: imageUrls,
+            city,
+            address,
+            capacity,
+            area,
+            price,
+            tags,
+            amenities,
+        });
+
+    if (error) {
+        console.error('Error creating space:', error);
+        throw new Error("Erro ao criar espaço");
+    }
 
     revalidatePath('/dashboard');
     redirect('/dashboard');
 }
 
 export async function updateSpace(id: string, formData: FormData) {
+    const supabase = createServerSupabaseClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+        throw new Error("Não autenticado");
+    }
+
+    // Check admin role
+    const { data: dbUser } = await supabase
+        .from('users')
+        .select('role')
+        .eq('id', user.id)
+        .single();
+
+    if (dbUser?.role !== "admin") {
+        throw new Error("Não autorizado");
+    }
+
     const name = formData.get('name') as string;
     const description = formData.get('description') as string;
     const city = formData.get('city') as string;
     const address = formData.get('address') as string;
     const capacity = parseInt(formData.get('capacity') as string) || 0;
     const area = formData.get('area') as string;
-    const price = parseFloat(formData.get('price') as string) || 0;
+    const price = formData.get('price') as string;
 
     // Handle multiple new images
     const newImageFiles = formData.getAll('images') as File[];
@@ -81,17 +151,59 @@ export async function updateSpace(id: string, formData: FormData) {
     // Combine existing and new images
     const allImages = [...existingImages, ...newImageUrls];
 
-    await sql`
-      UPDATE spaces
-      SET name=${name}, description=${description}, image=${allImages as any}, city=${city}, address=${address}, capacity=${capacity}, area=${area}, price=${price}, tags=${tags as any}, amenities=${amenities as any}
-      WHERE id=${id}
-    `;
+    const { error } = await supabase
+        .from('spaces')
+        .update({
+            name,
+            description,
+            image: allImages,
+            city,
+            address,
+            capacity,
+            area,
+            price,
+            tags,
+            amenities,
+        })
+        .eq('id', id);
+
+    if (error) {
+        console.error('Error updating space:', error);
+        throw new Error("Erro ao atualizar espaço");
+    }
 
     revalidatePath('/dashboard');
     redirect('/dashboard');
 }
 
 export async function deleteSpace(id: string) {
-    await sql`DELETE FROM spaces WHERE id = ${id}`;
+    const supabase = createServerSupabaseClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+        throw new Error("Não autenticado");
+    }
+
+    // Check admin role
+    const { data: dbUser } = await supabase
+        .from('users')
+        .select('role')
+        .eq('id', user.id)
+        .single();
+
+    if (dbUser?.role !== "admin") {
+        throw new Error("Não autorizado");
+    }
+
+    const { error } = await supabase
+        .from('spaces')
+        .delete()
+        .eq('id', id);
+
+    if (error) {
+        console.error('Error deleting space:', error);
+        throw new Error("Erro ao excluir espaço");
+    }
+
     revalidatePath('/dashboard');
 }

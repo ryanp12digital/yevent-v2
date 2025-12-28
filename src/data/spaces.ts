@@ -21,13 +21,14 @@ export interface Space {
   name: string;
   image: string | string[] | StaticImageData;
   city: string;
-  address: string; // Added address field
+  address: string;
   capacity: number;
   area: string;
-  tags: string[];
-  price?: number;
-  amenities: string[]; // Changed to required array of string keys
-  rules?: string[];
+  tags: string[] | null;
+  price?: string | null;
+  amenities: string[] | null;
+  rules?: string[] | null;
+  createdAt?: string | null;
 }
 
 export const SPACES: Space[] = [

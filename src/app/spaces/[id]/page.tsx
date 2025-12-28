@@ -4,7 +4,7 @@ import SpaceDetailView from '@/components/views/SpaceDetailView'
 import { Space } from '@/data/spaces'
 
 export async function generateMetadata({ params }: { params: { id: string } }) {
-  const space = await getSpace(params.id) as Space
+  const space = await getSpace(params.id) as any as Space
   if (!space) return {}
 
   return {
@@ -14,6 +14,6 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
 }
 
 export default async function SpacePage({ params }: { params: { id: string } }) {
-  const space = await getSpace(params.id) as Space
+  const space = await getSpace(params.id) as any as Space
   return <SpaceDetailView space={space} />
 }

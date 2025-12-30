@@ -3,6 +3,7 @@
 import { Space } from '@/data/spaces';
 import { useState, useTransition } from 'react';
 import { generateSEODescription } from '@/actions/ai';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const AVAILABLE_TAGS = [
     'Auditório', 'Corporativo', 'Fortaleza', 'Reunião', 'Privativo',
@@ -102,7 +103,38 @@ export default function SpaceForm({ initialData, action, readOnly = false }: Spa
     };
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-6 bg-white p-6 rounded-lg shadow-md max-w-4xl mx-auto">
+        <div className="relative">
+            <AnimatePresence>
+                {isSaving && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="absolute inset-0 bg-white/90 backdrop-blur-sm z-50 flex items-center justify-center rounded-lg"
+                    >
+                        <motion.div
+                            initial={{ scale: 0.8, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0.8, opacity: 0 }}
+                            className="flex flex-col items-center gap-4"
+                        >
+                            <motion.div
+                                animate={{ rotate: 360 }}
+                                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                                className="w-16 h-16 border-4 border-blue-200 border-t-blue-600 rounded-full"
+                            />
+                            <motion.p
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                className="text-lg font-medium text-gray-700"
+                            >
+                                Salvando sala...
+                            </motion.p>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+            <form onSubmit={handleSubmit} className="space-y-6 bg-white p-6 rounded-lg shadow-md max-w-4xl mx-auto">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Name */}
                 <div>
@@ -339,6 +371,7 @@ export default function SpaceForm({ initialData, action, readOnly = false }: Spa
                     </button>
                 </div>
             )}
-        </form>
+            </form>
+        </div>
     );
 }

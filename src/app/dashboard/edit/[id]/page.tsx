@@ -2,11 +2,23 @@ import SpaceForm from '@/components/admin/SpaceForm';
 import { updateSpace, getSpace } from '@/actions/spaces';
 import { Space } from '@/data/spaces';
 import { createServerSupabaseClient } from '@/lib/supabase';
+import { isSuperAdmin } from '@/actions/users';
 
 export default async function EditSpacePage({ params }: { params: { id: string } }) {
     const supabase = createServerSupabaseClient();
     const { data: { user } } = await supabase.auth.getUser();
-    const isAdmin = user?.user_metadata?.role === "admin";
+    
+    // Check admin role from users table
+    const { data: userData } = await supabase
+        .from('users')
+        .select('role')
+        .eq('id', user?.id)
+        .single();
+    
+    const superAdmin = await isSuperAdmin();
+    // Admin is either role='admin' or super admin email
+    const isAdmin = userData?.role === 'admin' || superAdmin;
+    
     const space = await getSpace(params.id) as any as Space;
     const updateSpaceWithId = updateSpace.bind(null, params.id);
 

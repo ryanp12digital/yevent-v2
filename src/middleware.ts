@@ -58,8 +58,24 @@ export async function middleware(request: NextRequest) {
     const isLoggedIn = !!user
 
     const { nextUrl } = request
-    const isPublicRoute = ["/", "/login", "/register"].includes(nextUrl.pathname)
-    const isAuthRoute = ["/login", "/register", "/reset-password"].includes(nextUrl.pathname)
+    const pathname = nextUrl.pathname
+    
+    // Rotas públicas que não requerem autenticação
+    const publicRoutes = [
+        "/",
+        "/login",
+        "/register",
+        "/contact",
+        "/politicas-de-privacidade",
+        "/termo-de-uso",
+        "/conheca-a-yevent"
+    ]
+    
+    // Verifica se é uma rota de espaços (inclui /spaces e /spaces/[id])
+    const isSpacesRoute = pathname.startsWith("/spaces")
+    
+    const isPublicRoute = publicRoutes.includes(pathname) || isSpacesRoute
+    const isAuthRoute = ["/login", "/register", "/reset-password"].includes(pathname)
 
     if (isAuthRoute) {
         if (isLoggedIn) {

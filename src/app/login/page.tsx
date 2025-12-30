@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Loader2, Mail, Lock, ArrowRight, Eye, EyeOff } from "lucide-react";
 
@@ -15,6 +16,7 @@ import { toast } from "react-hot-toast";
 export default function LoginPage() {
     const [isPending, startTransition] = useTransition();
     const [showPassword, setShowPassword] = useState(false);
+    const router = useRouter();
 
     const form = useForm<z.infer<typeof LoginSchema>>({
         resolver: zodResolver(LoginSchema),
@@ -25,14 +27,27 @@ export default function LoginPage() {
     });
 
     const onSubmit = (values: z.infer<typeof LoginSchema>) => {
-        startTransition(() => {
-            login(values).then((data) => {
+        startTransition(async () => {
+            try {
+                const data = await login(values);
                 if (data?.error) {
                     toast.error(data.error);
-                } else {
+                } else if (data?.success) {
+                    // Login bem-sucedido - redireciona para o dashboard
                     toast.success("Login realizado com sucesso!");
+                    router.push("/dashboard");
+                    router.refresh();
                 }
-            });
+            } catch (error: any) {
+                // Se for um redirect do Next.js, não é um erro real - apenas redireciona
+                if (error?.digest?.startsWith('NEXT_REDIRECT') || error?.message?.includes('NEXT_REDIRECT')) {
+                    router.push("/dashboard");
+                    router.refresh();
+                } else {
+                    console.error("Erro no login:", error);
+                    toast.error("Erro ao fazer login. Tente novamente.");
+                }
+            }
         });
     };
 

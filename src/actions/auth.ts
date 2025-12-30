@@ -48,6 +48,7 @@ export async function login(values: z.infer<typeof LoginSchema>) {
     loginAttempts.delete(email);
 
     revalidatePath("/", "layout");
+    // Retorna sucesso - o redirect será feito no client
     return { success: "Login bem-sucedido!" };
 }
 
